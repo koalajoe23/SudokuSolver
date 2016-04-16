@@ -35,32 +35,36 @@ Board::iterator& Board::iterator::operator=(const Board::iterator& rhs)
 
 Board::iterator& Board::iterator::operator++()
 {
-    //if y is already maxed, put it back to zero and increment x instead
-    if(Board::SIZE - 1 == m_yPosition)
-    {
-        ++m_xPosition;
-        m_yPosition = 0;
-    }
-    //common case: just increment y
-    else
+    //if x is already maxed, put it back to zero and increment y instead
+    if(Board::SIZE - 1 == m_xPosition)
     {
         ++m_yPosition;
+        m_xPosition = 0;
     }
+    //common case: just increment x
+    else
+    {
+        ++m_xPosition;
+    }
+
+    return *this;
 }
 
-Board::iterator&Board::iterator::operator--()
+Board::iterator& Board::iterator::operator--()
 {
-    //if y is already null, put it back to maximum value and decrement x instead
-    if(0 == m_yPosition)
+    //if x is already null, put it back to maximum value and decrement y instead
+    if(0 == m_xPosition)
     {
-        --m_xPosition;
-        m_yPosition = Board::SIZE - 1;
+        --m_yPosition;
+        m_xPosition = Board::SIZE - 1;
     }
     //common case: just decrement y
     else
     {
-        --m_yPosition;
+        --m_xPosition;
     }
+
+    return *this;
 }
 
 Board::iterator Board::iterator::operator++(int)
@@ -91,10 +95,9 @@ bool Board::iterator::operator!=(const Board::iterator& rhs) const
     return !(*this == rhs);
 }
 
-Cell& Board::iterator::operator->() const
+Cell* Board::iterator::operator->() const
 {
-    //FIXME: Can I just call operator*()?
-    return m_board.cell(m_xPosition, m_yPosition);
+    return &this->operator *();
 }
 
 Cell& Board::iterator::operator*() const
@@ -102,9 +105,37 @@ Cell& Board::iterator::operator*() const
     return m_board.cell(m_xPosition, m_yPosition);
 }
 
+bool Board::iterator::operator<(const Board::iterator& rhs) const
+{
+    return ( _order() < rhs._order());
+}
+
+bool Board::iterator::operator<=(const Board::iterator& rhs) const
+{
+    //TODO: Implement
+    throw 0;
+}
+
+bool Board::iterator::operator>(const Board::iterator& rhs) const
+{
+    //TODO: Implement
+    throw 0;
+}
+
+bool Board::iterator::operator>=(const Board::iterator& rhs) const
+{
+    //TODO: Implement
+    throw 0;
+}
+
 int Board::iterator::yPosition() const
 {
     return m_yPosition;
+}
+
+int Board::iterator::_order() const
+{
+    return m_xPosition * Board::SIZE + m_yPosition;
 }
 
 int Board::iterator::xPosition() const
@@ -142,7 +173,7 @@ Board::iterator Board::begin()
 
 Board::iterator Board::end()
 {
-    return Board::iterator(*this, Board::SIZE, 0); //1 field out of bounds
+    return Board::iterator(*this, 0, Board::SIZE); //1 field out of bounds
 }
 
 Board::iterator Board::rbegin()
@@ -152,14 +183,17 @@ Board::iterator Board::rbegin()
 
 Board::iterator Board::rend()
 {
-    return Board::iterator(*this, -1, Board::SIZE - 1);
+    return Board::iterator(*this, Board::SIZE - 1, -1);
 }
 
 Cell& Board::cell(unsigned int xPosition, unsigned int yPosition)
 {
-    if(xPosition < Board::SIZE && yPosition < Board::SIZE)
+    if(    xPosition < Board::SIZE
+        && yPosition < Board::SIZE
+        && xPosition >= 0
+        && yPosition >= 0)
     {
-        return m_cells[xPosition][yPosition];
+        return m_cells[yPosition][xPosition];
     }
     else
     {
@@ -211,4 +245,50 @@ Board::IllegalOperationException::IllegalOperationException(const Board& board, 
 Board::IllegalOperationException::~IllegalOperationException()
 {
 
+}
+
+Board::editable_iterator::editable_iterator(const Board::iterator& iterator)
+    : Board::iterator(iterator)
+{
+
+}
+
+Board::editable_iterator::~editable_iterator()
+{
+
+}
+
+Board::iterator& Board::editable_iterator::operator++()
+{
+    iterator end = m_board.end();
+    if (m_board.end() == *this)
+    {
+        return *this;
+    }
+
+    do
+    {
+        Board::iterator::operator ++();
+    }
+    while(   m_board.end() != *this
+          && m_board.cell(m_xPosition, m_yPosition).state() == Cell::STATE_FIXED);
+
+    return *this;
+}
+
+Board::iterator& Board::editable_iterator::operator--()
+{
+    if(m_board.rend() == *this)
+    {
+        return *this;
+    }
+
+    do
+    {
+        Board::iterator::operator --();
+    }
+    while(   m_board.rend() != *this
+          && m_board.cell(m_xPosition, m_yPosition).state() == Cell::STATE_FIXED);
+
+    return *this;
 }

@@ -14,30 +14,53 @@ class Board
 public:
     static const unsigned int SIZE = Cell::VALUE_COUNT - 1; //-1 because of VALUE_UNSET
 
-    //TODO: const_iterator
+    //TODO: const_iterator, but not needed right now... nice to have
     class iterator : public std::iterator<std::bidirectional_iterator_tag, Cell*>
     {
     public:
         iterator(Board& board, int xPosition = 0, int yPosition = 0);
         iterator(const iterator& rhs);
         virtual ~iterator();
+
+        //TODO: operators as friend functions where applicable
+        //TODO: missing operators commented below
         iterator& operator=(const iterator& rhs);
-        iterator& operator++();
-        iterator& operator--();
+        //iterator operator+(int offset);
+        //iterator operator-(int offset);
+        //iterator& operator+=(int offset);
+        //iterator& operator-=(int offset);
+        //sizeof-operator
+        virtual iterator& operator++();
+        virtual iterator& operator--();
         iterator operator++(int);
         iterator operator--(int);
         bool operator==(const iterator& rhs) const;
         bool operator!=(const iterator& rhs) const;
-        Cell& operator->() const;
+        Cell* operator->() const;
         Cell& operator*() const;
+        bool operator<(const iterator& rhs) const;
+        bool operator<=(const iterator& rhs) const;
+        bool operator>(const iterator& rhs) const;
+        bool operator>=(const iterator& rhs) const;
 
         int xPosition() const;
         int yPosition() const;
 
-    private:
+    protected:
+        int _order() const;
+
+    protected:
         Board& m_board;
         int m_xPosition;
         int m_yPosition;
+    };
+
+    class editable_iterator : public iterator {
+    public:
+        editable_iterator(const iterator& iterator);
+        virtual ~editable_iterator();
+        iterator& operator++();
+        iterator& operator--();
     };
 
 public:

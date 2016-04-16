@@ -66,6 +66,11 @@ void Cell::resetValue()
     }
 }
 
+void Cell::setState(Cell::StateType state)
+{
+    m_state = state;
+}
+
 Cell::IllegalStateException::IllegalStateException(const Cell& cell)
     : Cell::Exception(cell)
 {

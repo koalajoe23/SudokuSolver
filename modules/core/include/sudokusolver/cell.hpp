@@ -73,6 +73,7 @@ namespace SudokuSolver { namespace Core {
         bool hasNextValue() const;
         void setNextValue();
         void resetValue();
+        void setState(StateType state);
 
     private:
         ValueType m_value;

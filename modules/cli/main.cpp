@@ -28,11 +28,11 @@ int main(int argc, char* argv[])
 
     Core::Board board;
 
-    board.cell(200,200);
+    board.cell(4,7).setState(Core::Cell::STATE_FIXED);
 
-    for(Core::Board::iterator cellIterator = board.rbegin(); cellIterator != board.rend(); --cellIterator)
+    for(Core::Board::editable_iterator cellIterator = board.begin(); cellIterator != board.end(); ++cellIterator)
     {
-        std::cout << "Cell[" << cellIterator.xPosition() << "][" << cellIterator.yPosition() << "]" << std::endl;
+        std::cout << "Cell(" << cellIterator.xPosition() << "," << cellIterator.yPosition() << ")" << std::endl;
     }
 
     return EXIT_SUCCESS;
