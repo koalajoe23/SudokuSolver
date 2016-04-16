@@ -1,0 +1,125 @@
+#include <sudokusolver/cell.hpp>
+
+using namespace SudokuSolver::Core;
+
+Cell::Cell(Cell::StateType state /*= Cell::STATE_EDITABLE*/, Cell::ValueType value /*= Cell::VALUE_UNSET*/)
+{
+    //a fixed cell can not be unset
+    if(Cell::STATE_FIXED == state && Cell::VALUE_UNSET == value)
+    {
+        throw Cell::IllegalStateException(this);
+    }
+}
+
+Cell::Cell(const Cell& rhs)
+{
+    *this = rhs;
+}
+
+Cell::~Cell()
+{
+
+}
+
+Cell&Cell::operator=(const Cell& rhs)
+{
+    m_state = rhs.m_state;
+    m_value = rhs.m_value;
+}
+
+Cell::ValueType Cell::value() const
+{
+    return m_value;
+}
+
+Cell::StateType Cell::state() const
+{
+    return m_state;
+}
+
+bool Cell::hasNextValue() const
+{
+    return Cell::STATE_EDITABLE == m_state && Cell::VALUE_NINE != m_value;
+}
+
+void Cell::setNextValue()
+{
+    if(hasNextValue())
+    {
+        m_value = static_cast<Cell::ValueType>(static_cast<int>(m_value) + 1);
+    }
+    else
+    {
+        throw Cell::IllegalOperationException(this, __FUNCTION__);
+    }
+}
+
+void Cell::resetValue()
+{
+    if(Cell::STATE_EDITABLE == m_state)
+    {
+        m_value = Cell::VALUE_UNSET;
+    }
+    else
+    {
+        throw Cell::IllegalOperationException(this, __FUNCTION__);
+    }
+}
+
+Cell::IllegalStateException::IllegalStateException(const Cell* cell)
+    : Cell::CellException(cell)
+{
+    m_message += "Illegal cell state";
+}
+
+Cell::IllegalStateException::~IllegalStateException()
+{
+
+}
+
+Cell::CellException::CellException(const Cell* cell)
+    : m_cell(cell)
+    , m_message("Cell(state => " + std::to_string(m_cell->state()) + ", value => " + std::to_string(m_cell->value()) + "): ")
+{
+
+}
+
+Cell::CellException::CellException(const Cell::CellException& rhs)
+{
+    *this = rhs;
+}
+
+Cell::CellException::~CellException()
+{
+
+}
+
+Cell::CellException&Cell::CellException::operator=(const Cell::CellException& rhs)
+{
+     m_cell = rhs.m_cell;
+     m_message = rhs.m_message;
+
+     return *this;
+}
+
+const char* Cell::CellException::what() const throw ()
+{
+    return m_message.c_str();
+}
+
+const Cell* Cell::CellException::cell() const
+{
+    return m_cell;
+}
+
+Cell::IllegalOperationException::IllegalOperationException(const Cell* cell, const char* operation)
+    : Cell::CellException(cell)
+    , m_operation(operation)
+{
+    m_message += std::string("Illegal cell operation ") + std::string(m_operation);
+}
+
+Cell::IllegalOperationException::~IllegalOperationException()
+{
+
+}
