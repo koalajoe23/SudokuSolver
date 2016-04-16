@@ -16,7 +16,7 @@ namespace SudokuSolver { namespace Core {
             , VALUE_TWO = 2
             , VALUE_THREE = 3
             , VALUE_FOUR = 4
-            , VALUE_FIFE = 5
+            , VALUE_FIVE = 5
             , VALUE_SIX = 6
             , VALUE_SEVEN = 7
             , VALUE_EIGHT = 8
@@ -64,6 +64,12 @@ namespace SudokuSolver { namespace Core {
             std::string m_operation;
         };
 
+        class Parser {
+        public:
+            static Cell fromStdString(const std::string& cellStr);
+            static std::string toStdString(const Cell& cell);
+        };
+
         Cell(StateType state = STATE_EDITABLE, ValueType value = VALUE_UNSET);
         Cell(const Cell& rhs);
         virtual ~Cell();
@@ -74,6 +80,7 @@ namespace SudokuSolver { namespace Core {
         void setNextValue();
         void resetValue();
         void setState(StateType state);
+        void setValue(ValueType value);
 
     private:
         ValueType m_value;

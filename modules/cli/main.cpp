@@ -26,14 +26,28 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }*/
 
-    Core::Board board;
+    std::string str = "X9X" "XXX" "24X"
+                      "5X6" "XXX" "9XX"
+                      "X37" "6X9" "85X"
 
-    board.cell(4,7).setState(Core::Cell::STATE_FIXED);
+                      "XX2" "X6X" "X7X"
+                      "968" "7X4" "XXX"
+                      "4X3" "1XX" "XXX"
 
-    for(Core::Board::editable_iterator cellIterator = board.begin(); cellIterator != board.end(); ++cellIterator)
+                      "XXX" "48X" "XX3"
+                      "XXX" "2X7" "XX5"
+                      "XXX" "XX1" "XXX";
+    Core::Board board = Core::Board::Parser::fromStdString(str);
+
+    //board.cell(4,7).setState(Core::Cell::STATE_FIXED);
+    //board.cell(4,7).setValue(Core::Cell::VALUE_FIVE);
+
+    /*for(Core::Board::editable_iterator cellIterator = board.begin(); cellIterator != board.end(); ++cellIterator)
     {
         std::cout << "Cell(" << cellIterator.xPosition() << "," << cellIterator.yPosition() << ")" << std::endl;
-    }
+    }*/
+
+    std::cout << Core::Board::Parser::toStdString(board) << std::endl;
 
     return EXIT_SUCCESS;
 }

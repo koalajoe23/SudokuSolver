@@ -63,6 +63,12 @@ public:
         iterator& operator--();
     };
 
+    class Parser {
+    public:
+        static Board fromStdString(const std::string& boardStr);
+        static std::string toStdString(const Board& board);
+    };
+
 public:
     class Exception : public std::exception
     {

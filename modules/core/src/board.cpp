@@ -292,3 +292,50 @@ Board::iterator& Board::editable_iterator::operator--()
 
     return *this;
 }
+
+Board Board::Parser::fromStdString(const std::string& boardStr)
+{
+    //throw if string is too short or long for board
+    if(boardStr.length() != Board::SIZE * Board::SIZE)
+    {
+        //TODO: exception
+        throw 0;
+    }
+
+    Board board;
+
+    iterator boardIterator = board.begin();
+
+    for(std::string::const_iterator characterIter = boardStr.cbegin(); characterIter != boardStr.cend(); ++characterIter)
+    {
+        const char character = *characterIter;
+
+        Cell& cell = *boardIterator;
+        cell = (Cell::Parser::fromStdString(std::string(&character)));
+
+        //a cell should be either editable or having value
+        assert(   (boardIterator->state() == Cell::STATE_EDITABLE)
+               != (boardIterator->value() != Cell::VALUE_UNSET)
+              );
+
+        //go to next field on board
+        ++boardIterator;
+    }
+
+    return board;
+}
+
+std::string Board::Parser::toStdString(const Board& constBoard)
+{
+    std::string returnValue;
+    returnValue.reserve(Board::SIZE * Board::SIZE);
+
+    //FIXME: const_iterator would be nicer
+    Board& board = *const_cast<Board*>(&constBoard);
+    for(Board::iterator boardIterator = board.begin(); boardIterator != board.end(); ++boardIterator)
+    {
+        returnValue += Cell::Parser::toStdString(*boardIterator);
+    }
+
+    return returnValue;
+}
