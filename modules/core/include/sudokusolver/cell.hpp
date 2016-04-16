@@ -32,36 +32,36 @@ namespace SudokuSolver { namespace Core {
             , STATE_COUNT //<Determine State count
         };
     public:
-        class CellException : public std::exception
+        class Exception : public std::exception
         {
             // exception interface
         public:
             virtual const char* what() const throw ();
-            const Cell* cell() const;
+            const Cell& cell() const;
 
         protected:
-            CellException(const Cell* cell);
-            CellException(const CellException& rhs);
-            virtual ~CellException();
-            CellException& operator=(const CellException& rhs);
+            Exception(const Cell& cell);
+            Exception(const Exception& rhs);
+            virtual ~Exception();
+            Exception& operator=(const Exception& rhs);
         protected:
             const Cell* m_cell;
             std::string m_message;
         };
-        class IllegalStateException : public CellException
+        class IllegalStateException : public Exception
         {
         public:
-            explicit IllegalStateException(const Cell* cell);
+            explicit IllegalStateException(const Cell& cell);
             virtual ~IllegalStateException();
         };
-        class IllegalOperationException : public CellException
+        class IllegalOperationException : public Exception
         {
         public:
-            explicit IllegalOperationException(const Cell* cell, const char* operation);
+            explicit IllegalOperationException(const Cell& cell, const std::string& operation);
             virtual ~IllegalOperationException();
 
         private:
-            const char* m_operation;
+            std::string m_operation;
         };
 
         Cell(StateType state = STATE_EDITABLE, ValueType value = VALUE_UNSET);

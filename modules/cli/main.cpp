@@ -28,6 +28,8 @@ int main(int argc, char* argv[])
 
     Core::Board board;
 
+    board.cell(200,200);
+
     for(Core::Board::iterator cellIterator = board.rbegin(); cellIterator != board.rend(); --cellIterator)
     {
         std::cout << "Cell[" << cellIterator.xPosition() << "][" << cellIterator.yPosition() << "]" << std::endl;

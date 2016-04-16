@@ -4,6 +4,7 @@
 #include <sudokusolver/cell.hpp>
 
 #include <array>
+#include <string>
 
 namespace SudokuSolver {  namespace Core
 {
@@ -37,6 +38,32 @@ public:
         Board& m_board;
         int m_xPosition;
         int m_yPosition;
+    };
+
+public:
+    class Exception : public std::exception
+    {
+        // exception interface
+    public:
+        virtual const char* what() const throw ();
+        const Board& board() const;
+
+    protected:
+        Exception(const Board& board);
+        Exception(const Exception& rhs);
+        virtual ~Exception();
+        Exception& operator=(const Exception& rhs);
+    protected:
+        const Board* m_board;
+        std::string m_message;
+    };
+    class IllegalOperationException : public Exception
+    {
+    public:
+        explicit IllegalOperationException(const Board& board, const std::string& operation);
+        virtual ~IllegalOperationException();
+    private:
+        std::string m_operation;
     };
 private:
     typedef std::array<std::array<Cell,Cell::VALUE_COUNT>,Cell::VALUE_COUNT> CellArray;
