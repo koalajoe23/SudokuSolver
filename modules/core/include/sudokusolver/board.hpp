@@ -66,7 +66,7 @@ public:
         std::string m_operation;
     };
 private:
-    typedef std::array<std::array<Cell,Cell::VALUE_COUNT>,Cell::VALUE_COUNT> CellArray;
+    typedef std::array<std::array<Cell,Board::SIZE>,Board::SIZE> CellArray;
 public:
     Board();
     Board(const Board& rhs);
