@@ -194,40 +194,40 @@ Board::iterator Board::rend_row(unsigned int row)
     return Board::iterator(*this, Board::SIZE - 1, row - 1);
 }
 
-Board::iterator Board::begin_column(unsigned int column)
+Board::vertical_iterator Board::begin_column(unsigned int column)
 {
     if(column >= Board::SIZE)
     {
         throw Board::IllegalOperationException(*this, std::string("begin_column(" + std::to_string(column) + std::string(")")));
     }
-    return Board::iterator(*this, column, 0);
+    return Board::vertical_iterator(*this, column, 0);
 }
 
-Board::iterator Board::end_column(unsigned int column)
+Board::vertical_iterator Board::end_column(unsigned int column)
 {
     if(column >= Board::SIZE)
     {
         throw Board::IllegalOperationException(*this, std::string("end_column(" + std::to_string(column) + std::string(")")));
     }
-    return Board::iterator(*this, column + 1, 0);
+    return Board::vertical_iterator(*this, column + 1, 0);
 }
 
-Board::iterator Board::rbegin_column(unsigned int column)
+Board::vertical_iterator Board::rbegin_column(unsigned int column)
 {
     if(column >= Board::SIZE)
     {
         throw Board::IllegalOperationException(*this, std::string("rbegin_column(" + std::to_string(column) + std::string(")")));
     }
-    return Board::iterator(*this, column, Board::SIZE - 1);
+    return Board::vertical_iterator(*this, column, Board::SIZE - 1);
 }
 
-Board::iterator Board::rend_column(unsigned int column)
+Board::vertical_iterator Board::rend_column(unsigned int column)
 {
     if(column >= Board::SIZE)
     {
         throw Board::IllegalOperationException(*this, std::string("rend_column(" + std::to_string(column) + std::string(")")));
     }
-    return Board::iterator(*this, column - 1, Board::SIZE - 1);
+    return Board::vertical_iterator(*this, column - 1, Board::SIZE - 1);
 }
 
 Cell& Board::cell(unsigned int xPosition, unsigned int yPosition)
@@ -287,6 +287,12 @@ Board::IllegalOperationException::IllegalOperationException(const Board& board, 
 }
 
 Board::IllegalOperationException::~IllegalOperationException()
+{
+
+}
+
+Board::editable_iterator::editable_iterator(Board& board, int xPosition, int yPosition)
+    : Board::iterator(board, xPosition, yPosition)
 {
 
 }
@@ -384,6 +390,12 @@ std::string Board::Parser::toStdString(const Board& constBoard)
     return returnValue;
 }
 
+Board::vertical_iterator::vertical_iterator(Board& board, int xPosition, int yPosition)
+    : Board::iterator(board, xPosition, yPosition)
+{
+
+}
+
 Board::vertical_iterator::vertical_iterator(const Board::iterator& iterator)
      : Board::iterator(iterator)
 {
@@ -412,14 +424,6 @@ Board::vertical_iterator& Board::vertical_iterator::operator++()
         ++m_yPosition;
     }
 
-    //if we go 1 beyond the last cell we are at (Board::SIZE,0), but the default (horizontal) end iterator is (0, Board::SIZE)
-    //let's correct that
-    if(m_xPosition == Board::SIZE && m_yPosition == 0)
-    {
-        m_xPosition = 0;
-        m_yPosition = Board::SIZE;
-    }
-
     return *this;
 }
 
@@ -437,15 +441,13 @@ Board::vertical_iterator& Board::vertical_iterator::operator--()
         --m_yPosition;
     }
 
-    //if we go 1 beyond the last cell we are at (-1, Board::Size - 1), but the default (horizontal) end iterator is (Board::SIZE - 1, -1)
-    //let's correct that
-    if(m_xPosition == -1 && m_yPosition == Board::SIZE - 1)
-    {
-        m_xPosition = Board::SIZE - 1;
-        m_yPosition = -1;
-    }
-
     return *this;
+}
+
+Board::diagonal_iterator::diagonal_iterator(Board& board, int xPosition, int yPosition)
+    : Board::iterator(board, xPosition, yPosition)
+{
+
 }
 
 Board::diagonal_iterator::diagonal_iterator(const Board::iterator& iterator)

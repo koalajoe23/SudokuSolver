@@ -54,6 +54,7 @@ public:
 
     class editable_iterator : public iterator {
     public:
+        editable_iterator(Board& board, int xPosition = 0, int yPosition = 0);
         editable_iterator(const iterator& iterator);
         virtual ~editable_iterator();
         editable_iterator& operator++();
@@ -62,6 +63,7 @@ public:
 
     class vertical_iterator : public iterator {
     public:
+        vertical_iterator(Board& board, int xPosition = 0, int yPosition = 0);
         vertical_iterator(const iterator& iterator);
         virtual ~vertical_iterator();
         vertical_iterator& operator++();
@@ -70,6 +72,7 @@ public:
 
     class diagonal_iterator : public iterator {
     public:
+        diagonal_iterator(Board& board, int xPosition = 0, int yPosition = 0);
         diagonal_iterator(const iterator& iterator);
         virtual ~diagonal_iterator();
         diagonal_iterator& operator++();
@@ -128,10 +131,10 @@ public:
     Board::iterator rbegin_row(unsigned int row);
     Board::iterator rend_row(unsigned int row);
 
-    Board::iterator begin_column(unsigned int column);
-    Board::iterator end_column(unsigned int column);
-    Board::iterator rbegin_column(unsigned int column);
-    Board::iterator rend_column(unsigned int column);
+    Board::vertical_iterator begin_column(unsigned int column);
+    Board::vertical_iterator end_column(unsigned int column);
+    Board::vertical_iterator rbegin_column(unsigned int column);
+    Board::vertical_iterator rend_column(unsigned int column);
 
 private:
     CellArray m_cells;
