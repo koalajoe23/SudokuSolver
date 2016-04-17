@@ -492,3 +492,41 @@ Board::diagonal_iterator&Board::diagonal_iterator::operator--()
 
     return *this;
 }
+
+Board::box_iterator::box_iterator(Board& board, unsigned int box)
+    : Board::iterator(board, 0, 0) //< x & y position will be changed in function body
+    , m_box(box)
+{
+    //Get first cell of box (upper left)
+    m_xPosition = (m_box * Board::BOX_SIZE) % Board::SIZE;
+    m_yPosition = std::floor(m_box * Board::BOX_SIZE / Board::SIZE) * Board::BOX_SIZE;
+}
+
+Board::box_iterator::box_iterator(const Board::iterator& iterator)
+    : Board::iterator(iterator)
+{
+
+}
+
+Board::box_iterator::~box_iterator()
+{
+
+}
+
+Board::box_iterator& Board::box_iterator::operator++()
+{
+    m_xPosition++;
+
+    if(m_xPosition == ((m_box * Board::BOX_SIZE) % Board::SIZE) + 3)
+    {
+        m_xPosition = ((m_box * Board::BOX_SIZE) % Board::SIZE);
+        ++m_yPosition;
+    }
+}
+
+Board::box_iterator& Board::box_iterator::operator--()
+{
+    //FIXME implement backwards box iteration. It is not needed right now
+
+    throw("Not Implemented!");
+}

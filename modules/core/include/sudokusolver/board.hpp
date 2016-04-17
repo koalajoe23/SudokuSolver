@@ -5,6 +5,7 @@
 
 #include <array>
 #include <string>
+#include <cmath>
 
 namespace SudokuSolver {  namespace Core
 {
@@ -13,6 +14,7 @@ class Board
 {
 public:
     static const unsigned int SIZE = Cell::VALUE_COUNT - 1; //-1 because of VALUE_UNSET
+    static const unsigned int BOX_SIZE = std::sqrt(SIZE);
 
     //TODO: const_iterator, but not needed right now... nice to have
     class iterator : public std::iterator<std::bidirectional_iterator_tag, Cell*>
@@ -77,6 +79,18 @@ public:
         virtual ~diagonal_iterator();
         diagonal_iterator& operator++();
         diagonal_iterator& operator--();
+
+    };
+
+    class box_iterator : public iterator {
+    public:
+        box_iterator(Board& board, unsigned int box);
+        box_iterator(const iterator& iterator);
+        virtual ~box_iterator();
+        box_iterator& operator++();
+        box_iterator& operator--();
+    private:
+        unsigned int m_box;
     };
 
     class Parser {
