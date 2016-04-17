@@ -134,6 +134,7 @@ public:
     Board& operator=(const Board& rhs);
 public:
     Cell& cell(unsigned int xPosition, unsigned int yPosition);
+    void reset();
 
     Board::iterator begin();
     Board::iterator end();

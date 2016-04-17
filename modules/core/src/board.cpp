@@ -246,6 +246,14 @@ Cell& Board::cell(unsigned int xPosition, unsigned int yPosition)
     }
 }
 
+void Board::reset()
+{
+    for(Board::editable_iterator editableIterator(begin()); editableIterator != end(); ++editableIterator)
+    {
+        editableIterator->resetValue();
+    }
+}
+
 const char* Board::Exception::what() const throw ()
 {
     return m_message.c_str();
@@ -294,13 +302,22 @@ Board::IllegalOperationException::~IllegalOperationException()
 Board::editable_iterator::editable_iterator(Board& board, int xPosition, int yPosition)
     : Board::iterator(board, xPosition, yPosition)
 {
-
+    if(m_board.cell(m_xPosition, m_yPosition).state() != Cell::STATE_EDITABLE)
+    {
+        //This forwards to the next editable cell
+        operator++();
+    }
 }
 
 Board::editable_iterator::editable_iterator(const Board::iterator& iterator)
     : Board::iterator(iterator)
 {
-
+    //FIXME: Redundancy to other ctor
+    if(m_board.cell(m_xPosition, m_yPosition).state() != Cell::STATE_EDITABLE)
+    {
+        //This forwards to the next editable cell
+        operator++();
+    }
 }
 
 Board::editable_iterator::~editable_iterator()
