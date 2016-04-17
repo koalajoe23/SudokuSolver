@@ -52,16 +52,8 @@ int main(int argc, char* argv[])
 
     Core::Board board = Core::Board::Parser::fromStdString(str);
 
+    std::cout << Core::Board::Parser::toStdString(board) << std::endl;
     Core::Solver::solve(board);
-
-    //board.cell(4,7).setState(Core::Cell::STATE_FIXED);
-    //board.cell(4,7).setValue(Core::Cell::VALUE_FIVE);
-
-    /*for(Core::Board::diagonal_iterator cellIterator = board.begin_row(2); cellIterator != board.end(); ++cellIterator)
-    {
-        std::cout << "Cell(" << cellIterator.xPosition() << "," << cellIterator.yPosition() << ")" << std::endl;
-    }*/
-
     std::cout << Core::Board::Parser::toStdString(board) << std::endl;
 
     return EXIT_SUCCESS;

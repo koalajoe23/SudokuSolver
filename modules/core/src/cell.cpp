@@ -151,7 +151,7 @@ Cell Cell::Parser::fromStdString(const std::string& cellStr)
         throw 0;
     }
 
-    if ("X" == cellStr)
+    if ("0" == cellStr || "." == cellStr || "X" == cellStr)
     {
         return Cell(STATE_EDITABLE, VALUE_UNSET);
     }
@@ -212,9 +212,9 @@ std::string Cell::Parser::toStdString(const Cell& cell)
 {
     //FIXME: Ugly code
 
-    if(cell.state() == STATE_EDITABLE)
+    if(cell.state() == STATE_EDITABLE && cell.value() == VALUE_UNSET)
     {
-        return "X";
+        return "0";
     }
 
     //VALUE_UNSET cannot occur when state != STATE_EDITABLE
