@@ -42,10 +42,10 @@ int main(int argc, char* argv[])
     //board.cell(4,7).setState(Core::Cell::STATE_FIXED);
     //board.cell(4,7).setValue(Core::Cell::VALUE_FIVE);
 
-    /*for(Core::Board::editable_iterator cellIterator = board.begin(); cellIterator != board.end(); ++cellIterator)
+    for(Core::Board::diagonal_iterator cellIterator = board.begin_row(2); cellIterator != board.end(); ++cellIterator)
     {
         std::cout << "Cell(" << cellIterator.xPosition() << "," << cellIterator.yPosition() << ")" << std::endl;
-    }*/
+    }
 
     std::cout << Core::Board::Parser::toStdString(board) << std::endl;
 

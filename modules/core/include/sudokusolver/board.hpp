@@ -23,13 +23,7 @@ public:
         virtual ~iterator();
 
         //TODO: operators as friend functions where applicable
-        //TODO: missing operators commented below
         iterator& operator=(const iterator& rhs);
-        //iterator operator+(int offset);
-        //iterator operator-(int offset);
-        //iterator& operator+=(int offset);
-        //iterator& operator-=(int offset);
-        //sizeof-operator
         virtual iterator& operator++();
         virtual iterator& operator--();
         iterator operator++(int);
@@ -38,16 +32,19 @@ public:
         bool operator!=(const iterator& rhs) const;
         Cell* operator->() const;
         Cell& operator*() const;
-        bool operator<(const iterator& rhs) const;
-        bool operator<=(const iterator& rhs) const;
-        bool operator>(const iterator& rhs) const;
-        bool operator>=(const iterator& rhs) const;
+        //FIXME: missing operators commented below
+        //iterator operator+(int offset);
+        //iterator operator-(int offset);
+        //iterator& operator+=(int offset);
+        //iterator& operator-=(int offset);
+        //sizeof-operator
+        //bool operator<(const iterator& rhs) const;
+        //bool operator<=(const iterator& rhs) const;
+        //bool operator>(const iterator& rhs) const;
+        //bool operator>=(const iterator& rhs) const;
 
         int xPosition() const;
         int yPosition() const;
-
-    protected:
-        int _order() const;
 
     protected:
         Board& m_board;
@@ -59,8 +56,24 @@ public:
     public:
         editable_iterator(const iterator& iterator);
         virtual ~editable_iterator();
-        iterator& operator++();
-        iterator& operator--();
+        editable_iterator& operator++();
+        editable_iterator& operator--();
+    };
+
+    class vertical_iterator : public iterator {
+    public:
+        vertical_iterator(const iterator& iterator);
+        virtual ~vertical_iterator();
+        vertical_iterator& operator++();
+        vertical_iterator& operator--();
+    };
+
+    class diagonal_iterator : public iterator {
+    public:
+        diagonal_iterator(const iterator& iterator);
+        virtual ~diagonal_iterator();
+        diagonal_iterator& operator++();
+        diagonal_iterator& operator--();
     };
 
     class Parser {
@@ -86,6 +99,7 @@ public:
         const Board* m_board;
         std::string m_message;
     };
+
     class IllegalOperationException : public Exception
     {
     public:
@@ -103,10 +117,22 @@ public:
     Board& operator=(const Board& rhs);
 public:
     Cell& cell(unsigned int xPosition, unsigned int yPosition);
+
     Board::iterator begin();
     Board::iterator end();
     Board::iterator rbegin();
     Board::iterator rend();
+
+    Board::iterator begin_row(unsigned int row);
+    Board::iterator end_row(unsigned int row);
+    Board::iterator rbegin_row(unsigned int row);
+    Board::iterator rend_row(unsigned int row);
+
+    Board::iterator begin_column(unsigned int column);
+    Board::iterator end_column(unsigned int column);
+    Board::iterator rbegin_column(unsigned int column);
+    Board::iterator rend_column(unsigned int column);
+
 private:
     CellArray m_cells;
 };

@@ -6,11 +6,13 @@ include(../../common.cmake)
 set(SOURCE_FILES
     src/cell.cpp
     src/board.cpp
+    src/solver.cpp
     )
 
 set(HEADER_FILES
     include/sudokusolver/cell.hpp
     include/sudokusolver/board.hpp
+    include/sudokusolver/solver.hpp
     )
 include_directories(include)
 

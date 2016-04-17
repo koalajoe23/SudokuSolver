@@ -105,37 +105,9 @@ Cell& Board::iterator::operator*() const
     return m_board.cell(m_xPosition, m_yPosition);
 }
 
-bool Board::iterator::operator<(const Board::iterator& rhs) const
-{
-    return ( _order() < rhs._order());
-}
-
-bool Board::iterator::operator<=(const Board::iterator& rhs) const
-{
-    //TODO: Implement
-    throw 0;
-}
-
-bool Board::iterator::operator>(const Board::iterator& rhs) const
-{
-    //TODO: Implement
-    throw 0;
-}
-
-bool Board::iterator::operator>=(const Board::iterator& rhs) const
-{
-    //TODO: Implement
-    throw 0;
-}
-
 int Board::iterator::yPosition() const
 {
     return m_yPosition;
-}
-
-int Board::iterator::_order() const
-{
-    return m_xPosition * Board::SIZE + m_yPosition;
 }
 
 int Board::iterator::xPosition() const
@@ -168,12 +140,12 @@ Board& Board::operator=(const Board& rhs)
 
 Board::iterator Board::begin()
 {
-    return Board::iterator(*this);
+    return begin_row(0);
 }
 
 Board::iterator Board::end()
 {
-    return Board::iterator(*this, 0, Board::SIZE); //1 field out of bounds
+    return end_row(Board::SIZE - 1);
 }
 
 Board::iterator Board::rbegin()
@@ -184,6 +156,78 @@ Board::iterator Board::rbegin()
 Board::iterator Board::rend()
 {
     return Board::iterator(*this, Board::SIZE - 1, -1);
+}
+
+Board::iterator Board::begin_row(unsigned int row)
+{
+    if(row >= Board::SIZE)
+    {
+        throw Board::IllegalOperationException(*this, std::string("begin_row(" + std::to_string(row) + std::string(")")));
+    }
+    return Board::iterator(*this, 0, row);
+}
+
+Board::iterator Board::end_row(unsigned int row)
+{
+    if(row >= Board::SIZE)
+    {
+        throw Board::IllegalOperationException(*this, std::string("end_row(" + std::to_string(row) + std::string(")")));
+    }
+    return Board::iterator(*this, 0, row + 1);
+}
+
+Board::iterator Board::rbegin_row(unsigned int row)
+{
+    if(row >= Board::SIZE)
+    {
+        throw Board::IllegalOperationException(*this, std::string("rbegin_row(" + std::to_string(row) + std::string(")")));
+    }
+    return Board::iterator(*this, Board::SIZE - 1, row);
+}
+
+Board::iterator Board::rend_row(unsigned int row)
+{
+    if(row >= Board::SIZE)
+    {
+        throw Board::IllegalOperationException(*this, std::string("rend_row(" + std::to_string(row) + std::string(")")));
+    }
+    return Board::iterator(*this, Board::SIZE - 1, row - 1);
+}
+
+Board::iterator Board::begin_column(unsigned int column)
+{
+    if(column >= Board::SIZE)
+    {
+        throw Board::IllegalOperationException(*this, std::string("begin_column(" + std::to_string(column) + std::string(")")));
+    }
+    return Board::iterator(*this, column, 0);
+}
+
+Board::iterator Board::end_column(unsigned int column)
+{
+    if(column >= Board::SIZE)
+    {
+        throw Board::IllegalOperationException(*this, std::string("end_column(" + std::to_string(column) + std::string(")")));
+    }
+    return Board::iterator(*this, column + 1, 0);
+}
+
+Board::iterator Board::rbegin_column(unsigned int column)
+{
+    if(column >= Board::SIZE)
+    {
+        throw Board::IllegalOperationException(*this, std::string("rbegin_column(" + std::to_string(column) + std::string(")")));
+    }
+    return Board::iterator(*this, column, Board::SIZE - 1);
+}
+
+Board::iterator Board::rend_column(unsigned int column)
+{
+    if(column >= Board::SIZE)
+    {
+        throw Board::IllegalOperationException(*this, std::string("rend_column(" + std::to_string(column) + std::string(")")));
+    }
+    return Board::iterator(*this, column - 1, Board::SIZE - 1);
 }
 
 Cell& Board::cell(unsigned int xPosition, unsigned int yPosition)
@@ -258,7 +302,7 @@ Board::editable_iterator::~editable_iterator()
 
 }
 
-Board::iterator& Board::editable_iterator::operator++()
+Board::editable_iterator& Board::editable_iterator::operator++()
 {
     iterator end = m_board.end();
     if (m_board.end() == *this)
@@ -276,7 +320,7 @@ Board::iterator& Board::editable_iterator::operator++()
     return *this;
 }
 
-Board::iterator& Board::editable_iterator::operator--()
+Board::editable_iterator& Board::editable_iterator::operator--()
 {
     if(m_board.rend() == *this)
     {
@@ -338,4 +382,111 @@ std::string Board::Parser::toStdString(const Board& constBoard)
     }
 
     return returnValue;
+}
+
+Board::vertical_iterator::vertical_iterator(const Board::iterator& iterator)
+     : Board::iterator(iterator)
+{
+
+}
+
+Board::vertical_iterator::~vertical_iterator()
+{
+
+}
+
+Board::vertical_iterator& Board::vertical_iterator::operator++()
+{
+    //NOTE: this is the exact same function as iterator::operator++ only with xPosition and yPosition swapped
+    //FIXME: Refactor into shared function
+
+    //if y is already maxed, put it back to zero and increment x instead
+    if(Board::SIZE - 1 == m_yPosition)
+    {
+        ++m_xPosition;
+        m_yPosition = 0;
+    }
+    //common case: just increment y
+    else
+    {
+        ++m_yPosition;
+    }
+
+    //if we go 1 beyond the last cell we are at (Board::SIZE,0), but the default (horizontal) end iterator is (0, Board::SIZE)
+    //let's correct that
+    if(m_xPosition == Board::SIZE && m_yPosition == 0)
+    {
+        m_xPosition = 0;
+        m_yPosition = Board::SIZE;
+    }
+
+    return *this;
+}
+
+Board::vertical_iterator& Board::vertical_iterator::operator--()
+{
+    //if y is already null, put it back to maximum value and decrement x instead
+    if(0 == m_yPosition)
+    {
+        --m_xPosition;
+        m_yPosition = Board::SIZE - 1;
+    }
+    //common case: just decrement x
+    else
+    {
+        --m_yPosition;
+    }
+
+    //if we go 1 beyond the last cell we are at (-1, Board::Size - 1), but the default (horizontal) end iterator is (Board::SIZE - 1, -1)
+    //let's correct that
+    if(m_xPosition == -1 && m_yPosition == Board::SIZE - 1)
+    {
+        m_xPosition = Board::SIZE - 1;
+        m_yPosition = -1;
+    }
+
+    return *this;
+}
+
+Board::diagonal_iterator::diagonal_iterator(const Board::iterator& iterator)
+    : Board::iterator(iterator)
+{
+
+}
+
+Board::diagonal_iterator::~diagonal_iterator()
+{
+
+}
+
+Board::diagonal_iterator&Board::diagonal_iterator::operator++()
+{
+    ++m_xPosition;
+    ++m_yPosition;
+
+    //if we go 1 beyond the last cell we are at (Board::SIZE,Board::SIZE), but the default (horizontal) end iterator is (0, Board::SIZE)
+    //let's correct that
+    if(m_xPosition == Board::SIZE || m_yPosition == Board::SIZE)
+    {
+        m_xPosition = 0;
+        m_yPosition = Board::SIZE;
+    }
+
+    return *this;
+}
+
+Board::diagonal_iterator&Board::diagonal_iterator::operator--()
+{
+    --m_xPosition;
+    --m_yPosition;
+
+    //if we go 1 beyond the last cell we are at (Board::SIZE,Board::SIZE), but the default (horizontal) end iterator is (0, Board::SIZE)
+    //let's correct that
+    if(m_xPosition == -1 || m_yPosition == -1)
+    {
+        m_xPosition = Board::SIZE - 1;
+        m_yPosition = -1;
+    }
+
+    return *this;
 }
