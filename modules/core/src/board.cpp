@@ -378,7 +378,8 @@ Board Board::Parser::fromStdString(const std::string& boardStr)
         const char character = *characterIter;
 
         Cell& cell = *boardIterator;
-        cell = (Cell::Parser::fromStdString(std::string(&character)));
+        std::string charStr(1, character);
+        cell = Cell::Parser::fromStdString(charStr);
 
         //a cell should be either editable or having value
         assert(   (boardIterator->state() == Cell::STATE_EDITABLE)
