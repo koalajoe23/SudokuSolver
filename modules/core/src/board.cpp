@@ -116,12 +116,19 @@ int Board::iterator::xPosition() const
 }
 
 Board::Board()
-    : m_cells()
+    : Observable<BoardObserver>()
+    , m_cells()
 {
-
+    //Register board as cell listener for all cells
+    for(iterator iter = begin(); iter != end(); ++iter)
+    {
+        iter->addObserver(*this);
+    }
 }
 
 Board::Board(const Board& rhs)
+    : Observable<BoardObserver>()
+    , m_cells()
 {
     *this = rhs;
 }
@@ -228,6 +235,18 @@ Board::vertical_iterator Board::rend_column(unsigned int column)
         throw Board::IllegalOperationException(*this, std::string("rend_column(" + std::to_string(column) + std::string(")")));
     }
     return Board::vertical_iterator(*this, column - 1, Board::SIZE - 1);
+}
+#include <iostream>
+void Board::cellValueChanged(const Cell& cell, Cell::ValueType value)
+{
+    std::function<void(BoardObserver&, const Board&, const Cell&, Cell::ValueType)> valueChangedFunc = std::mem_fn(&BoardObserver::boardCellValueChanged);
+    std::function<void(BoardObserver&)> parameterizedValueChangedFunc = std::bind(valueChangedFunc, std::placeholders::_1, *this, cell, value);
+    notifyObservers(parameterizedValueChangedFunc);
+}
+
+void Board::cellStateChanged(const Cell& cell, Cell::StateType value)
+{
+
 }
 
 Cell& Board::cell(unsigned int xPosition, unsigned int yPosition)

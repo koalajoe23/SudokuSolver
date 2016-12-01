@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/gui">
+        <file>main.qml</file>
+        <file>Board.qml</file>
+        <file>Cell.qml</file>
+    </qresource>
+</RCC>

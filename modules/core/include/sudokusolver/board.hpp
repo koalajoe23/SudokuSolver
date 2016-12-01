@@ -2,6 +2,9 @@
 #define SUDOKUSOLVER_CORE_BOARD_HPP_INCLUDED
 
 #include <sudokusolver/cell.hpp>
+#include <sudokusolver/observable.hpp>
+#include <sudokusolver/board_observer.hpp>
+#include <sudokusolver/cell_observer.hpp>
 
 #include <array>
 #include <string>
@@ -10,7 +13,7 @@
 namespace SudokuSolver {  namespace Core
 {
 
-class Board
+class Board : public Observable<BoardObserver>, public CellObserver
 {
 public:
     static const unsigned int SIZE = Cell::VALUE_COUNT - 1; //-1 because of VALUE_UNSET
@@ -39,7 +42,6 @@ public:
         //iterator operator-(int offset);
         //iterator& operator+=(int offset);
         //iterator& operator-=(int offset);
-        //sizeof-operator
         //bool operator<(const iterator& rhs) const;
         //bool operator<=(const iterator& rhs) const;
         //bool operator>(const iterator& rhs) const;
@@ -153,6 +155,12 @@ public:
 
 private:
     CellArray m_cells;
+
+
+    // CellObserver interface
+public:
+    virtual void cellValueChanged(const Cell& cell, Cell::ValueType value);
+    virtual void cellStateChanged(const Cell& cell, Cell::StateType value);
 };
 
 }}

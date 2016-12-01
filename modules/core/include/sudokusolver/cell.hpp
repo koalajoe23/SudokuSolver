@@ -4,10 +4,12 @@
 #include <exception>
 #include <string>
 
+#include <sudokusolver/observable.hpp>
 
 namespace SudokuSolver { namespace Core {
 
-    class Cell
+    class CellObserver;
+    class Cell : public Observable<CellObserver>
     {
     public:
         enum ValueType {

@@ -1,6 +1,7 @@
 #include <sudokusolver/cell.hpp>
-
+#include <sudokusolver/cell_observer.hpp>
 #include <assert.h>
+#include <functional>
 
 using namespace SudokuSolver::Core;
 
@@ -53,6 +54,9 @@ void Cell::setNextValue()
     if(hasNextValue())
     {
         m_value = static_cast<Cell::ValueType>(static_cast<int>(m_value) + 1);
+        std::function<void(CellObserver&, const  Cell&, Cell::ValueType)> valueChangedFunc = std::mem_fn(&CellObserver::cellValueChanged);
+        std::function<void(CellObserver&)> parameterizedValueChangedFunc = std::bind(valueChangedFunc, std::placeholders::_1, *this, m_value);
+        notifyObservers(parameterizedValueChangedFunc);
     }
     else
     {
