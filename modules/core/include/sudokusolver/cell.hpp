@@ -85,6 +85,10 @@ namespace SudokuSolver { namespace Core {
         void setValue(ValueType value);
 
     private:
+
+        void notifyObserversValueChanged();
+        void notifyObserversStateChanged();
+
         ValueType m_value;
         StateType m_state;
     };

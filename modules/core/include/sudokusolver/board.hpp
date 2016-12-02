@@ -3,7 +3,6 @@
 
 #include <sudokusolver/cell.hpp>
 #include <sudokusolver/observable.hpp>
-#include <sudokusolver/board_observer.hpp>
 #include <sudokusolver/cell_observer.hpp>
 
 #include <array>
@@ -12,7 +11,7 @@
 
 namespace SudokuSolver {  namespace Core
 {
-
+class BoardObserver;
 class Board : public Observable<BoardObserver>, public CellObserver
 {
 public:
@@ -24,6 +23,7 @@ public:
     {
     public:
         iterator(Board& board, int xPosition = 0, int yPosition = 0);
+        iterator(Board& board, const Cell& cell);
         iterator(const iterator& rhs);
         virtual ~iterator();
 
@@ -49,6 +49,7 @@ public:
 
         int xPosition() const;
         int yPosition() const;
+        Board& board() const;
 
     protected:
         Board& m_board;
@@ -160,7 +161,7 @@ private:
     // CellObserver interface
 public:
     virtual void cellValueChanged(const Cell& cell, Cell::ValueType value);
-    virtual void cellStateChanged(const Cell& cell, Cell::StateType value);
+    virtual void cellStateChanged(const Cell& cell, Cell::StateType state);
 };
 
 }}

@@ -1,5 +1,5 @@
 #include <sudokusolver/board.hpp>
-
+#include <sudokusolver/board_observer.hpp>
 #include <assert.h>
 
 using namespace SudokuSolver::Core;
@@ -11,6 +11,31 @@ Board::iterator::iterator(Board& board, int xPosition, int yPosition)
     , m_yPosition(yPosition)
 {
 
+}
+
+Board::iterator::iterator(Board& board, const Cell& cell)
+    : m_board(board)
+{
+    //XXX: I am not smart enough right now to use std::find :/
+
+    //XXX: const_cast wouldn't be needed if Board::const_iterator would be implemented...
+    //Cell* unconstCell = const_cast<Cell*>(&cell);
+    //Board::iterator iter = std::find(begin(), end(), *cell);
+    //Board::iterator iter = begin();
+
+    Board::iterator found = m_board.end();
+    for(Board::iterator iter = m_board.begin(); iter != m_board.end(); ++iter)
+    {
+        Cell* current = &(*iter);
+        if(current == &cell)
+        {
+            found = iter;
+            break;
+        }
+    }
+
+    m_xPosition = found.xPosition();
+    m_yPosition = found.yPosition();
 }
 
 Board::iterator::iterator(const Board::iterator& rhs)
@@ -108,6 +133,11 @@ Cell& Board::iterator::operator*() const
 int Board::iterator::yPosition() const
 {
     return m_yPosition;
+}
+
+Board&Board::iterator::board() const
+{
+    return m_board;
 }
 
 int Board::iterator::xPosition() const
@@ -239,14 +269,22 @@ Board::vertical_iterator Board::rend_column(unsigned int column)
 #include <iostream>
 void Board::cellValueChanged(const Cell& cell, Cell::ValueType value)
 {
-    std::function<void(BoardObserver&, const Board&, const Cell&, Cell::ValueType)> valueChangedFunc = std::mem_fn(&BoardObserver::boardCellValueChanged);
-    std::function<void(BoardObserver&)> parameterizedValueChangedFunc = std::bind(valueChangedFunc, std::placeholders::_1, *this, cell, value);
+    Board::iterator found(*this, cell);
+    assert(found != end());
+
+    std::function<void(BoardObserver&, const Board::iterator&, Cell::ValueType)> valueChangedFunc = std::mem_fn(&BoardObserver::boardCellValueChanged);
+    std::function<void(BoardObserver&)> parameterizedValueChangedFunc = std::bind(valueChangedFunc, std::placeholders::_1, found, value);
     notifyObservers(parameterizedValueChangedFunc);
 }
 
-void Board::cellStateChanged(const Cell& cell, Cell::StateType value)
+void Board::cellStateChanged(const Cell& cell, Cell::StateType state)
 {
+    Board::iterator found(*this, cell);
+    assert(found != end());
 
+    std::function<void(BoardObserver&, const Board::iterator&, Cell::StateType)> stateChangedFunc = std::mem_fn(&BoardObserver::boardCellStateChanged);
+    std::function<void(BoardObserver&)> parameterizedStateChangedFunc = std::bind(stateChangedFunc, std::placeholders::_1, found, state);
+    notifyObservers(parameterizedStateChangedFunc);
 }
 
 Cell& Board::cell(unsigned int xPosition, unsigned int yPosition)

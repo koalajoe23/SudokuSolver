@@ -54,9 +54,7 @@ void Cell::setNextValue()
     if(hasNextValue())
     {
         m_value = static_cast<Cell::ValueType>(static_cast<int>(m_value) + 1);
-        std::function<void(CellObserver&, const  Cell&, Cell::ValueType)> valueChangedFunc = std::mem_fn(&CellObserver::cellValueChanged);
-        std::function<void(CellObserver&)> parameterizedValueChangedFunc = std::bind(valueChangedFunc, std::placeholders::_1, *this, m_value);
-        notifyObservers(parameterizedValueChangedFunc);
+        notifyObserversValueChanged();
     }
     else
     {
@@ -69,6 +67,7 @@ void Cell::resetValue()
     if(Cell::STATE_EDITABLE == m_state)
     {
         m_value = Cell::VALUE_UNSET;
+        notifyObserversValueChanged();
     }
     else
     {
@@ -79,11 +78,27 @@ void Cell::resetValue()
 void Cell::setState(Cell::StateType state)
 {
     m_state = state;
+    notifyObserversStateChanged();
 }
 
 void Cell::setValue(Cell::ValueType value)
 {
     m_value = value;
+    notifyObserversValueChanged();
+}
+
+void Cell::notifyObserversValueChanged()
+{
+    std::function<void(CellObserver&, const  Cell&, Cell::ValueType)> valueChangedFunc = std::mem_fn(&CellObserver::cellValueChanged);
+    std::function<void(CellObserver&)> parameterizedValueChangedFunc = std::bind(valueChangedFunc, std::placeholders::_1, std::ref(*this), m_value);
+    notifyObservers(parameterizedValueChangedFunc);
+}
+
+void Cell::notifyObserversStateChanged()
+{
+    std::function<void(CellObserver&, const  Cell&, Cell::StateType)> stateChangedFunc = std::mem_fn(&CellObserver::cellStateChanged);
+    std::function<void(CellObserver&)> parameterizedStateChangedFunc = std::bind(stateChangedFunc, std::placeholders::_1, std::ref(*this), m_state);
+    notifyObservers(parameterizedStateChangedFunc);
 }
 
 Cell::IllegalStateException::IllegalStateException(const Cell& cell)

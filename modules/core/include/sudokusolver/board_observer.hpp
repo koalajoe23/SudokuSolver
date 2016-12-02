@@ -4,11 +4,10 @@
 #include<vector>
 #include<algorithm>
 
-#include <sudokusolver/cell_observer.hpp>
+#include <sudokusolver/board.hpp>
 
 namespace SudokuSolver { namespace Core {
 
-class Board;
 class BoardObserver {
 
 public:
@@ -18,8 +17,8 @@ public:
 
     // BoardObserver interface
 public:
-    virtual void boardCellValueChanged(const Board& board, const Cell& cell, Cell::ValueType value) = 0;
-    virtual void boardCellStateChanged(const Board& board, const Cell& cell, Cell::StateType value) = 0;
+    virtual void boardCellValueChanged(const Board::iterator& board, Cell::ValueType value) = 0;
+    virtual void boardCellStateChanged(const Board::iterator& board, Cell::StateType value) = 0;
 };
 
 }}
