@@ -1,9 +1,10 @@
-#include <sudokusolver/board.hpp>
-#include <sudokusolver/board_observer.hpp>
+#include <sudokusolver/core/board.hpp>
+#include <sudokusolver/core/board_observer.hpp>
 #include <assert.h>
 
 using namespace SudokuSolver::Core;
 
+const unsigned int Board::BOX_SIZE = std::sqrt(SIZE);
 
 Board::iterator::iterator(Board& board, int xPosition, int yPosition)
     : m_board(board)

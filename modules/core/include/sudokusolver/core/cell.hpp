@@ -4,7 +4,7 @@
 #include <exception>
 #include <string>
 
-#include <sudokusolver/observable.hpp>
+#include <sudokusolver/core/observable.hpp>
 
 namespace SudokuSolver { namespace Core {
 

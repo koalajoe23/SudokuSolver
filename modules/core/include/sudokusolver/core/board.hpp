@@ -1,9 +1,9 @@
 #ifndef SUDOKUSOLVER_CORE_BOARD_HPP_INCLUDED
 #define SUDOKUSOLVER_CORE_BOARD_HPP_INCLUDED
 
-#include <sudokusolver/cell.hpp>
-#include <sudokusolver/observable.hpp>
-#include <sudokusolver/cell_observer.hpp>
+#include <sudokusolver/core/cell.hpp>
+#include <sudokusolver/core/observable.hpp>
+#include <sudokusolver/core/cell_observer.hpp>
 
 #include <array>
 #include <string>
@@ -15,8 +15,8 @@ class BoardObserver;
 class Board : public Observable<BoardObserver>, public CellObserver
 {
 public:
-    static const unsigned int SIZE = Cell::VALUE_COUNT - 1; //-1 because of VALUE_UNSET
-    static const unsigned int BOX_SIZE = std::sqrt(SIZE);
+    static const unsigned int SIZE = Cell::VALUE_COUNT - 1;  //-1 because of VALUE_UNSET
+    static const unsigned int BOX_SIZE;
 
     //TODO: const_iterator, but not needed right now... nice to have
     class iterator : public std::iterator<std::bidirectional_iterator_tag, Cell*>

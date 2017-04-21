@@ -1,4 +1,4 @@
-#include <sudokusolver/solver.hpp>
+#include <sudokusolver/core/solver.hpp>
 
 #include <set>
 #include <assert.h>

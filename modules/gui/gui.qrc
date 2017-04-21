@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>Board.qml</file>
         <file>Cell.qml</file>
+        <file>AboutDialog.qml</file>
     </qresource>
 </RCC>

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cassert>
 
-#include <sudokusolver/solver.hpp>
+#include <sudokusolver/core/solver.hpp>
 
 int main(int argc, char* argv[])
 {

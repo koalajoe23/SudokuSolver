@@ -4,7 +4,7 @@
 #include<vector>
 #include<algorithm>
 
-#include <sudokusolver/board.hpp>
+#include <sudokusolver/core/board.hpp>
 
 namespace SudokuSolver { namespace Core {
 

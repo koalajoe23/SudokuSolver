@@ -1,5 +1,5 @@
-#include <sudokusolver/cell.hpp>
-#include <sudokusolver/cell_observer.hpp>
+#include <sudokusolver/core/cell.hpp>
+#include <sudokusolver/core/cell_observer.hpp>
 #include <assert.h>
 #include <functional>
 

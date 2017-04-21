@@ -1,7 +1,7 @@
 #ifndef SUDOKUSOLVER_CORE_SOLVER_HPP_INCLUDED
 #define SUDOKUSOLVER_CORE_SOLVER_HPP_INCLUDED
 
-#include <sudokusolver/board.hpp>
+#include <sudokusolver/core/board.hpp>
 
 namespace SudokuSolver { namespace Core {
 
